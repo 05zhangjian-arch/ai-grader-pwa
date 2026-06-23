@@ -1,4 +1,4 @@
-﻿// ============================================
+// ============================================
 // AI Grader - Intelligent Homework Grading
 // Main Application
 // ============================================
@@ -222,11 +222,15 @@ function capturePhoto() {
   const video = document.getElementById("cameraPreview");
   const box = document.getElementById("cameraBox");
   const canvas = document.getElementById("captureCanvas");
-  const w = video.videoWidth || 1280;
-  const h = video.videoHeight || 960;
+  let w = video.videoWidth || 1280;
+  let h = video.videoHeight || 960;
+  // Resize image to reduce payload size (max 1024px wide)
+  const MW = 1024, MH = 768;
+  if (w > MW) { h = Math.round(h * MW / w); w = MW; }
+  if (h > MH) { w = Math.round(w * MH / h); h = MH; }
   canvas.width = w; canvas.height = h;
   canvas.getContext("2d").drawImage(video, 0, 0, w, h);
-  state._currentPhotoData = canvas.toDataURL("image/jpeg", 0.85);
+  state._currentPhotoData = canvas.toDataURL("image/jpeg", 0.8);
   let img = box.querySelector("img");
   if (!img) { img = document.createElement("img"); box.appendChild(img); }
   img.src = state._currentPhotoData;
@@ -454,7 +458,6 @@ async function callAIGrading(assignment, imageData) {
     ],
     max_tokens: 4096,
     temperature: 0.2,
-    response_format: { type: "json_object" }
   };
     const res = await fetch(proxyUrl, {
     method: "POST",
@@ -467,7 +470,7 @@ async function callAIGrading(assignment, imageData) {
   });
   if (!res.ok) {
     let errMsg = "API 请求失败";
-    try { const err = await res.json(); errMsg = err.error?.message || errMsg; } catch (e) {}
+    try { const err = await res.json(); errMsg = JSON.stringify(err) || errMsg; } catch (e) {}
     throw new Error(errMsg + " (" + res.status + ")");
   }
   const data = await res.json();
@@ -745,7 +748,6 @@ async function extractQAFromImage(imageDataArray) {
       ],
       max_tokens: 4096,
       temperature: 0.1,
-      response_format: { type: "json_object" }
     })
   });
   if (!res.ok) { var errMsg = "API请求失败"; try { var e = await res.json(); errMsg = e.error?.message || errMsg; } catch(ex) {} throw new Error(errMsg + " (" + res.status + ")"); }
@@ -777,7 +779,6 @@ async function extractQAFromText(text) {
       ],
       max_tokens: 4096,
       temperature: 0.1,
-      response_format: { type: "json_object" }
     })
   });
   if (!res.ok) { var errMsg = "API请求失败"; try { var e = await res.json(); errMsg = e.error?.message || errMsg; } catch(ex) {} throw new Error(errMsg + " (" + res.status + ")"); }
