@@ -1,5 +1,5 @@
 {
-  "name": "AI Grader - \u667a\u80fd\u4f5c\u4e1a\u6279\u6539",
+  "name": "AI Grader - 智能作业批改",
   "short_name": "AI Grader",
   "description": "AI-powered homework grading system",
   "start_url": "/",
@@ -18,5 +18,6 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "scope": "/"
 }
