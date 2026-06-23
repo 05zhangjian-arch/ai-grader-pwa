@@ -1,0 +1,26 @@
+﻿name: Build APK
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+      - name: Install BubbleWrap
+        run: npm install -g @googlechrome/bubblewrap
+      - name: Build APK
+        run: |
+          bubblewrap init --manifest https://05zhangjian-arch.github.io/ai-grader-pwa/manifest.json
+          bubblewrap build
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-grader-apk
+          path: app-release-signed.apk
