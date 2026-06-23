@@ -14,7 +14,7 @@ jobs:
           distribution: "zulu"
           java-version: "17"
       - name: Install BubbleWrap
-        run: npm install -g @googlechrome/bubblewrap
+        run: npm install -g https://github.com/pwa-builder/bubblewrap
       - name: Build APK
         run: |
           bubblewrap init --manifest https://05zhangjian-arch.github.io/ai-grader-pwa/manifest.json
